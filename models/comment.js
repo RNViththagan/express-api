@@ -9,47 +9,55 @@ module.exports = (sequelize, DataTypes) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate(models) {
-      // define association here
+    static associate({Post,User}) {
+        this.belongsTo(Post, {foreignKey: 'postId', as: 'post'});
+        this.belongsTo(User, {foreignKey: 'userId', as: 'user'});
     }
-  }
+  };
   Comment.init({
-    userId: {
-      type: DataTypes.INTEGER,
+    id: {
       allowNull: false,
-      isInt:true,
-      validate: {
-        notNull: { msg: 'userID cannot be null' },
-        notEmpty: { msg: 'userID must not be empty' },
-        isInt: {
-          msg: "Must be an integer number"
-        }
-      }
-    },
-    comment: {
-      type: DataTypes.TEXT,
-      allowNull: false,
-      validate: {
-        notNull: { msg: 'Comment cannot be null' },
-        notEmpty: { msg: 'Comment must not be empty' }
-      }
+      primaryKey: true,
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
     },
     postId: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
       allowNull: false,
-      isInt:true,
-      validate: {
-        notNull: { msg: 'Comment cannot be null' },
-        notEmpty: { msg: 'Comment must not be empty' },
-        isInt: {
-          msg: "Must be an integer number"
-        }
-      }
+      onDelete: "RESTRICT",
+      onUpdate: "CASCADE",
+      references: {
+        model: "posts",
+        key: "id"
+      },
+    },
+    userId: {
+      type: DataTypes.UUID,
+      allowNull: false,
+      onDelete: "RESTRICT",
+      onUpdate: "CASCADE",
+      references: {
+        model: "users",
+        key: "id"
+      },
+    },
+    body:{
+      type: DataTypes.TEXT,
+      allowNull:false
+    },
+    createdAt: {
+      allowNull: false,
+      type: DataTypes.DATE
+    },
+    updatedAt: {
+      allowNull: false,
+      type: DataTypes.DATE
     }
+
   }, {
     sequelize,
-    tableName: 'comments',
     modelName: 'Comment',
+    tableName: 'comments'
   });
   return Comment;
 };
