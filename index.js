@@ -143,7 +143,7 @@ app.post('/comments', async (req, res) => {
 
     console.log(req.body);
     try {
-        const commentEntry = await Comment.create({userId, postId, comment});
+        const commentEntry = await Comment.create({userId, postId, body:comment});
         return res.json(commentEntry);
     } catch (e) {
         console.log(e);
