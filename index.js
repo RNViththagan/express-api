@@ -1,5 +1,5 @@
 const express = require("express");
-const {sequelize, User, Post} = require("./models");
+const {sequelize, User, Post, Comment} = require("./models");
 
 const app = express();
 app.use(express.json());
@@ -11,7 +11,7 @@ app.post('/users', async (req, res) => {
         return res.json(user);
     } catch (e) {
         console.log(e);
-        return res.status(500).json(e);
+        return res.status(500).json({error: 'Something went wrong'});
     }
 });
 app.get('/users', async (req, res) => {
@@ -90,6 +90,79 @@ app.get('/posts', async (req, res) => {
     } catch (e) {
         console.log(e);
         return res.status(500).json({error: e});
+    }
+});
+
+
+//comment
+
+app.get('/comments', async (req, res) => {
+    try {
+        const comments = await Comment.findAll();
+        return res.json(comments);
+    } catch (e) {
+        console.log(e);
+        return res.status(500).json({error: 'Something went wrong'});
+    }
+});
+
+app.get('/comments/:id', async (req, res) => {
+    const id = req.params.id;
+    try {
+        const comment = await Comment.findOne({
+            where: {id}
+        });
+        return res.json(comment);
+    } catch (e) {
+        console.log(e);
+        return res.status(500).json({error: 'Something went wrong'});
+    }
+});
+
+app.post('/comments', async (req, res) => {
+    const {userId,postId,comment} = req.body;
+
+    console.log(req.body);
+    try {
+        const commentEntry = await Comment.create({userId, postId, comment});
+        return res.json(commentEntry);
+    } catch (e) {
+        console.log(e);
+        return res.status(500).json({error: e});
+    }
+});
+
+app.delete('/comments/:id', async (req, res) => {
+    const id = req.params.id;
+    try {
+        const comment = await Comment.findOne({
+            where: {id},
+        });
+        await comment.destroy();
+        return res.json({message: "Comment Deleted!"});
+    } catch (e) {
+        console.log(e);
+        return res.status(500).json({error: 'Something went wrong'});
+    }
+});
+
+app.put('/comments/:id', async (req, res) => {
+    const id = req.params.id;
+    const {userId,postId,comment} = req.body;
+    try {
+        const commentEntry = await Comment.findOne({
+            where: {id},
+        });
+        console.log(comment);
+        commentEntry.userId = userId;
+        commentEntry.postId = postId;
+        commentEntry.comment = comment;
+        await commentEntry.save();
+
+        return res.json(commentEntry);
+    } catch (e) {
+        console.log(e);
+        return res.status(500).json({error: 'Something went wrong in updating'});
     }
 });
 
