@@ -113,8 +113,6 @@ app.post('/posts/:id/comment', async (req, res) => {
     }
 });
 
-app.listen({port: 5001}, async () => {
-
 //comment
 
 app.get('/comments', async (req, res) => {
