@@ -3,7 +3,13 @@ const {sequelize, User, Post,Comment} = require("./models");
 
 const app = express();
 app.use(express.json());
-
+const cors = require('cors');
+const corsOptions ={
+    origin:'http://localhost:3000',
+    credentials:true,            //access-control-allow-credentials:true
+    optionSuccessStatus:200
+}
+app.use(cors(corsOptions));
 app.post('/users', async (req, res) => {
     const {name, email, role} = req.body;
 
