@@ -50,7 +50,7 @@ app.delete('/users/:uuid', async (req, res) => {
     const uuid = req.params.uuid;
     try {
         const user = await User.findOne({
-            where: {uuid},
+            where: {id:uuid},
         });
         await user.destroy();
         return res.json({message: "User Deleted!"});
